@@ -7,27 +7,20 @@ class DogBoard extends Component {
     super(props);
     this.state = {
       dogs: Map(),
-      dogId: 0,
+      dogID: 0,
       newDogName: '',
       newDogBreed: '',
-      newDogImage: '',
+      newDogImage: ''
     }
   }
-
   newDogNameFunction = (event) => {
-    this.setState({
-      newDogName: event.target.value
-    });
+    this.setState({ newDogName: event.target.value });
   }
   newDogBreedFunction = (event) => {
-    this.setState({ 
-      newDogBreed: event.target.value
-    });
+    this.setState({ newDogBreed: event.target.value });
   }
   newDogImageFunction = (event) => {
-    this.setState({
-      newDogImage: event.target.value
-    });
+    this.setState({ newDogImage: event.target.value });
   }
 
   saveDogInfo = () => {
@@ -36,14 +29,28 @@ class DogBoard extends Component {
       breed: this.state.newDogBreed,
       image: this.state.newDogImage,
     }
-    this.setState({
-      dogs: this.state.dogs.set(this.state.dogID, dogData),
-      dogID: this.state.dogID + 1
-    });
 
+  this.setState({
+      dogs: this.state.dogs.set(this.state.dogID, dogData),
+      dogID: this.state.dogID + 1,
+    });
   }
 
-  render () {
+  deleteDogInfo = (id) => {
+    this.setState({
+      dogs: this.state.dogs.delete(id),
+    });
+  }
+
+  updateDogName = (id, field) => {
+    this.setState({
+      dogs: this.state.dogs.update(id, (n) => {
+        return Object.assign({}, n, field);
+      })
+    });
+  }
+  
+  render() {
     const allDogs = this.state.dogs.entrySeq().map(
       ([id, dog]) => {
         return (
@@ -51,16 +58,20 @@ class DogBoard extends Component {
             name={dog.name}
             breed={dog.breed}
             dogURL={dog.image}
+            id={id}
             key={id}
+            delete={this.deleteDogInfo}
+            update={this.updateDogName}
           />
         );
       }
     );
     return (
       <div>
-        <p> this is the dog board! </p>
+        <p> this is the dog board </p>
         {allDogs}
         <p>Add a dog!</p>
+
         <p>Enter Name:</p>
         <input type="text" value={this.state.newDogName} onChange={this.newDogNameFunction} />
 
@@ -69,10 +80,10 @@ class DogBoard extends Component {
 
         <p>Enter Image URL:</p>
         <input type="text" value={this.state.newDogImage} onChange={this.newDogImageFunction} />
-
         <button onClick={this.saveDogInfo}>Save!</button>
+        
       </div>
-    )
+    );
   }
 }
 
